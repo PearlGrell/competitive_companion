@@ -7,25 +7,17 @@ class CodeforcesModel {
   int? maxRating;
   String? maxRank;
 
-  CodeforcesModel({
-    this.name,
-    this.rating,
-    this.handle,
-    this.contribution,
-    this.rank,
-    this.maxRating,
-    this.maxRank,
-  });
+  CodeforcesModel(
+      {this.name,
+        this.rating,
+        this.handle,
+        this.contribution,
+        this.rank,
+        this.maxRating,
+        this.maxRank});
 
   CodeforcesModel.fromJson(Map<String, dynamic> json) {
-    String firstName = json['firstName'] ?? 'N/A';
-    String lastName = json['lastName'] ?? 'N/A';
-    if(firstName == 'N/A' && lastName == 'N/A') {
-      name = 'N/A';
-    }
-    else {
-      name='$firstName $lastName';
-    }
+    name = json['name'];
     rating = json['rating'];
     handle = json['handle'];
     contribution = json['contribution'];
@@ -36,9 +28,7 @@ class CodeforcesModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    List<String> nameParts = name?.split(" ") ?? ['N/A', 'N/A'];
-    data['firstName'] = nameParts[0];
-    data['lastName'] = nameParts.length > 1 ? nameParts[1] : 'N/A';
+    data['name'] = name;
     data['rating'] = rating;
     data['handle'] = handle;
     data['contribution'] = contribution;

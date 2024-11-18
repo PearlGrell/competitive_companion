@@ -1,28 +1,36 @@
 class CodeChefModel {
-  final String? name;
-  final String? username;
-  final String? rating;
-  final String ?maxRating;
-  final String? globalRank;
-  final String? countryRank;
+  String? name;
+  String? username;
+  String? rating;
+  String? maxRating;
+  String? globalRank;
+  String? countryRank;
 
-  CodeChefModel({
-    this.name,
-    this.username,
-    this.rating,
-    this.maxRating,
-    this.globalRank,
-    this.countryRank,
-  });
+  CodeChefModel(
+      {this.name,
+        this.username,
+        this.rating,
+        this.maxRating,
+        this.globalRank,
+        this.countryRank});
 
-  factory CodeChefModel.fromJson(Map<String, dynamic> json) {
-    return CodeChefModel(
-      name: json['name'] ?? '',
-      username: json['username'] ?? '',
-      rating: json['rating'] ?? '',
-      maxRating: json['max_rating'] ?? '',
-      globalRank: json['global_rank'] ?? '',
-      countryRank: json['country_rank'] ?? '',
-    );
+  CodeChefModel.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+    username = json['username'];
+    rating = json['rating'];
+    maxRating = json['maxRating'];
+    globalRank = json['globalRank'];
+    countryRank = json['countryRank'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['name'] = name;
+    data['username'] = username;
+    data['rating'] = rating;
+    data['maxRating'] = maxRating;
+    data['globalRank'] = globalRank;
+    data['countryRank'] = countryRank;
+    return data;
   }
 }

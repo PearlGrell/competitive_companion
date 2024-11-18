@@ -1,6 +1,3 @@
-
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:hgv2/api/api.dart';
 import 'package:hgv2/models/codechef_model.dart';
@@ -27,10 +24,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          padding: EdgeInsets.all(MediaQuery
-              .of(context)
-              .size
-              .width * 0.048),
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.048),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -44,39 +38,24 @@ class _HomeState extends State<Home> {
                           hintText: 'Enter your username',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(
-                              Radius.circular(MediaQuery
-                                  .of(context)
-                                  .size
-                                  .width * 0.024),
+                              Radius.circular(
+                                  MediaQuery.of(context).size.width * 0.024),
                             ),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(width: MediaQuery
-                        .of(context)
-                        .size
-                        .width * 0.024),
-                    SizedBox(
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width * 0.24,
-                      height: MediaQuery
-                          .of(context)
-                          .size
-                          .width * 0.14,
-                      child: FilledButton(
-                        onPressed: () {
-                          _handleSubmit(emailController.text);
-                        },
-                        child: const Text('Submit'),
-                      ),
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.024),
+                    FilledButton(
+                      onPressed: () {
+                        _handleSubmit(emailController.text);
+                      },
+                      child: const Text('Submit'),
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
-                if (_hasValidData(codeChefModel))
+                  if (codeChefModel.name != null)
                   _buildProfileCard(
                     title: "CodeChef Profile",
                     details: [
@@ -87,31 +66,33 @@ class _HomeState extends State<Home> {
                       "Country Rank: ${codeChefModel.countryRank}",
                     ],
                   ),
-                if (_hasValidData(codeforcesModel))
-                  _buildProfileCard(
-                    title: "Codeforces Profile",
-                    details: [
-                      "Name: ${codeforcesModel.name}",
-                      "Rating: ${codeforcesModel.rating}",
-                      "Max Rating: ${codeforcesModel.maxRating}",
-                      "Rank: ${codeforcesModel.rank}",
-                      "Max Rank: ${codeforcesModel.maxRank}",
-                      "Contribution: ${codeforcesModel.contribution}",
-                    ],
-                  ),
-                if (_hasValidData(leetCodeModel))
+                  if (codeforcesModel.name != null) ...[
+                    _buildProfileCard(
+                      title: "Codeforces Profile",
+                      details: [
+                        "Username: ${codeforcesModel.handle}",
+                        "Name: ${codeforcesModel.name}",
+                        "Rating: ${codeforcesModel.rating}",
+                        "Max Rating: ${codeforcesModel.maxRating}",
+                        "Rank: ${codeforcesModel.rank}",
+                        "Max Rank: ${codeforcesModel.maxRank}",
+                        "Contribution: ${codeforcesModel.contribution}",
+                      ],
+                    ),
+                  ],
+                  if(leetCodeModel.username != null)
                   _buildProfileCard(
                     title: "LeetCode Profile",
                     details: [
                       "Username: ${leetCodeModel.username}",
-                      "Real Name: ${leetCodeModel.name}",
-                      "Rating: ${leetCodeModel.ranking}",
-                      "Solved Problems: ${leetCodeModel.solvedProblem}",
-                      "Badges: ${leetCodeModel.badges}",
-                      "Reputation: ${leetCodeModel.reputation}",
+                      "Real Name: ${leetCodeModel.realName}",
+                      "Rating: ${leetCodeModel.country}",
+                      "Solved Problems: ${leetCodeModel.solvedProblems}",
+                      "Badges: ${leetCodeModel.school}",
+                      "Reputation: ${leetCodeModel.company}",
                     ],
                   ),
-                if (_hasValidData(geeksForGeeksModel))
+                  if(geeksForGeeksModel.name != null)
                   _buildProfileCard(
                     title: "GeeksForGeeks Profile",
                     details: [
@@ -121,8 +102,7 @@ class _HomeState extends State<Home> {
                       "Max Streak: ${geeksForGeeksModel.maxStreak}",
                       "Institution: ${geeksForGeeksModel.institution}",
                       "Coding Score: ${geeksForGeeksModel.codingScore}",
-                      "Total Problems Solved: ${geeksForGeeksModel
-                          .totalProblemsSolved}",
+                      "Total Problems Solved: ${geeksForGeeksModel.totalProblemsSolved}",
                     ],
                     solvedStats: geeksForGeeksModel.solvedStats,
                   ),
@@ -136,23 +116,17 @@ class _HomeState extends State<Home> {
 
   _handleSubmit(String handle) async {
     try {
-      List<Map<String, dynamic>> responses = await API.getUserInfo(handle);
-
-      for (var response in responses) {
-        setState(() {
-          if (response['platform'] == 'codeforces') {
-            codeforcesModel = response['data'] as CodeforcesModel;
-          } else if (response['platform'] == 'codechef') {
-            codeChefModel = response['data'] as CodeChefModel;
-          } else if (response['platform'] == 'leetcode') {
-            leetCodeModel = response['data'] as LeetCodeModel;
-          } else if (response['platform'] == 'geeksforgeeks') {
-            geeksForGeeksModel = response['data'] as GeeksForGeeksModel;
-          }
-        });
-      }
-    } catch (error) {
-      log('Error: $error');
+      final Map<String, dynamic> data = await API.getUserInfo(handle);
+      setState(() {
+        codeforcesModel = data['codeforces'];
+        codeChefModel = data['codechef'];
+        leetCodeModel = data['leetcode'];
+        geeksForGeeksModel = data['geeksforgeeks'];
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to fetch data: $e')),
+      );
     }
   }
 
@@ -160,67 +134,39 @@ class _HomeState extends State<Home> {
   Widget _buildProfileCard({
     required String title,
     required List<String> details,
-    Map<String, dynamic>? solvedStats,
+    SolvedStats? solvedStats,
   }) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            ...details.map((detail) => Text(detail)),
-            if (solvedStats != null && solvedStats.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              const Text(
-                "Solved Stats:",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              Table(
-                border: TableBorder.all(color: Colors.grey, width: 0.5),
-                children: solvedStats.entries.map((entry) {
-                  return TableRow(children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        entry.key.capitalize(),
-                        style: const TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        entry.value.toString(),
-                        textAlign: TextAlign.right,
-                      ),
-                    ),
-                  ]);
-                }).toList(),
-              ),
+              ...details.map((detail) => Text(detail)),
+              if (solvedStats != null) ...[
+                const SizedBox(height: 8),
+                const Text(
+                  "Solved Stats",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Text("Easy: ${solvedStats.easy}"),
+                Text("Medium: ${solvedStats.medium}"),
+                Text("Hard: ${solvedStats.hard}"),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
-  }
-
-  bool _hasValidData(dynamic model) {
-    if (model is CodeChefModel) {
-      return model.name != 'N/A' && model.name != null;
-    } else if (model is CodeforcesModel) {
-      return model.name != 'N/A' && model.name != null;
-    } else if (model is LeetCodeModel) {
-      return model.name != 'N/A' && model.name != null;
-    } else if (model is GeeksForGeeksModel) {
-      return model.profilePhoto != 'N/A' && model.profilePhoto != null;
-    }
-    return false;
   }
 }
 

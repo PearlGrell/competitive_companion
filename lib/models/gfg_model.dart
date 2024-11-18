@@ -1,5 +1,4 @@
 class GeeksForGeeksModel {
-  String? userName;
   String? name;
   String? profilePhoto;
   String? instituteRank;
@@ -8,38 +7,35 @@ class GeeksForGeeksModel {
   String? institution;
   String? codingScore;
   String? totalProblemsSolved;
+  SolvedStats? solvedStats;
 
-  Map<String, dynamic>? solvedStats;
-
-  GeeksForGeeksModel({
-    this.userName,
-    this.name,
-    this.profilePhoto,
-    this.instituteRank,
-    this.currentStreak,
-    this.maxStreak,
-    this.institution,
-    this.codingScore,
-    this.totalProblemsSolved,
-    this.solvedStats,
-  });
+  GeeksForGeeksModel(
+      {this.name,
+        this.profilePhoto,
+        this.instituteRank,
+        this.currentStreak,
+        this.maxStreak,
+        this.institution,
+        this.codingScore,
+        this.totalProblemsSolved,
+        this.solvedStats});
 
   GeeksForGeeksModel.fromJson(Map<String, dynamic> json) {
-    userName = json['userName'];
-    name = json['name'] ?? 'N/A';
-    profilePhoto = json['profilePhoto'] ?? '';
-    instituteRank = json['instituteRank'] ?? 'N/A';
-    currentStreak = json['currentStreak'] ?? '00';
-    maxStreak = json['maxStreak'] ?? '00';
-    institution = json['institution'] ?? 'N/A';
-    codingScore = json['codingScore'] ?? '0';
-    totalProblemsSolved = json['totalProblemsSolved'] ?? '0';
-    solvedStats = json['solvedStats'];
+    name = json['name'];
+    profilePhoto = json['profilePhoto'];
+    instituteRank = json['instituteRank'];
+    currentStreak = json['currentStreak'];
+    maxStreak = json['maxStreak'];
+    institution = json['institution'];
+    codingScore = json['codingScore'];
+    totalProblemsSolved = json['totalProblemsSolved'];
+    solvedStats = json['solvedStats'] != null
+        ? SolvedStats.fromJson(json['solvedStats'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['userName'] = userName;
     data['name'] = name;
     data['profilePhoto'] = profilePhoto;
     data['instituteRank'] = instituteRank;
@@ -48,7 +44,34 @@ class GeeksForGeeksModel {
     data['institution'] = institution;
     data['codingScore'] = codingScore;
     data['totalProblemsSolved'] = totalProblemsSolved;
-    data['solvedStats'] = solvedStats;
+    if (solvedStats != null) {
+      data['solvedStats'] = solvedStats!.toJson();
+    }
+    return data;
+  }
+}
+
+class SolvedStats {
+  int? school;
+  int? easy;
+  int? medium;
+  int? hard;
+
+  SolvedStats({this.school, this.easy, this.medium, this.hard});
+
+  SolvedStats.fromJson(Map<String, dynamic> json) {
+    school = json['school'];
+    easy = json['easy'];
+    medium = json['medium'];
+    hard = json['hard'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['school'] = school;
+    data['easy'] = easy;
+    data['medium'] = medium;
+    data['hard'] = hard;
     return data;
   }
 }
