@@ -36,7 +36,6 @@ class CodeforcesModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-
     List<String> nameParts = name?.split(" ") ?? ['N/A', 'N/A'];
     data['firstName'] = nameParts[0];
     data['lastName'] = nameParts.length > 1 ? nameParts[1] : 'N/A';
