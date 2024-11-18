@@ -1,19 +1,20 @@
 class GeeksForGeeksModel {
   String? userName;
   String? name;
+  String? profilePhoto;
   String? instituteRank;
   String? currentStreak;
   String? maxStreak;
   String? institution;
   String? codingScore;
   String? totalProblemsSolved;
-  bool exists;
 
   Map<String, dynamic>? solvedStats;
 
   GeeksForGeeksModel({
     this.userName,
     this.name,
+    this.profilePhoto,
     this.instituteRank,
     this.currentStreak,
     this.maxStreak,
@@ -21,12 +22,12 @@ class GeeksForGeeksModel {
     this.codingScore,
     this.totalProblemsSolved,
     this.solvedStats,
-    this.exists = false,
   });
 
-  GeeksForGeeksModel.fromJson(Map<String, dynamic> json, bool exist): exists = exist {
+  GeeksForGeeksModel.fromJson(Map<String, dynamic> json) {
     userName = json['userName'];
     name = json['name'] ?? 'N/A';
+    profilePhoto = json['profilePhoto'] ?? '';
     instituteRank = json['instituteRank'] ?? 'N/A';
     currentStreak = json['currentStreak'] ?? '00';
     maxStreak = json['maxStreak'] ?? '00';
@@ -34,13 +35,13 @@ class GeeksForGeeksModel {
     codingScore = json['codingScore'] ?? '0';
     totalProblemsSolved = json['totalProblemsSolved'] ?? '0';
     solvedStats = json['solvedStats'];
-    exists = exist;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['userName'] = userName;
     data['name'] = name;
+    data['profilePhoto'] = profilePhoto;
     data['instituteRank'] = instituteRank;
     data['currentStreak'] = currentStreak;
     data['maxStreak'] = maxStreak;

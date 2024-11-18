@@ -218,7 +218,7 @@ class _HomeState extends State<Home> {
     } else if (model is LeetCodeModel) {
       return model.name != 'N/A' && model.name != null;
     } else if (model is GeeksForGeeksModel) {
-      return model.exists;
+      return model.profilePhoto != 'N/A' && model.profilePhoto != null;
     }
     return false;
   }
