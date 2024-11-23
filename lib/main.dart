@@ -1,16 +1,17 @@
+import 'package:cp_api/home.dart';
 import 'package:flutter/material.dart';
-import 'package:hgv2/home.dart';
+
 
 void main() {
-  runApp(const HGV2());
+  runApp(const CpApi());
 }
 
-class HGV2 extends StatelessWidget {
-  const HGV2({super.key});
+class CpApi extends StatelessWidget {
+  const CpApi({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'HGv2',
+      title: 'CP API',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

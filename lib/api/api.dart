@@ -1,14 +1,17 @@
 import 'dart:convert';
+import 'dart:developer';
 
-import 'package:hgv2/models/codechef_model.dart';
-import 'package:hgv2/models/codeforces_model.dart';
-import 'package:hgv2/models/gfg_model.dart';
-import 'package:hgv2/models/leetcode_model.dart';
+import 'package:cp_api/models/codechef_model.dart';
+import 'package:cp_api/models/codeforces_model.dart';
+import 'package:cp_api/models/gfg_model.dart';
+import 'package:cp_api/models/leetcode_model.dart';
 import 'package:http/http.dart' as http;
 
 class API {
+  static String baseURL = "https://cp-api-aryan-trivedi.vercel.app";
+
   static Future<Map<String, dynamic>> getUserInfo(String handle) async {
-    String url = 'https://hgv2-server-two.vercel.app/fetch-all/$handle';
+    String url = '$baseURL/fetch-all/$handle';
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
@@ -21,7 +24,7 @@ class API {
 
       if (data.containsKey('geeksforgeeks')) {
         GeeksForGeeksModel model =
-            GeeksForGeeksModel.fromJson(data['geeksforgeeks']);
+        GeeksForGeeksModel.fromJson(data['geeksforgeeks']);
         platformModels['geeksforgeeks'] = model;
       }
 
@@ -34,10 +37,97 @@ class API {
         LeetCodeModel model = LeetCodeModel.fromJson(data['leetcode']);
         platformModels['leetcode'] = model;
       }
-      print(platformModels);
       return platformModels;
     } else {
       throw Exception('Failed to load user data');
+    }
+  }
+
+  static Future<CodeforcesContest> getContest(
+      String platform, List<String> usernames, String contestId) async {
+    String url = '$baseURL/contest/$platform';
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'usernames': usernames,
+        'contestId': contestId,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      CodeforcesContest contest = CodeforcesContest.fromJson(data);
+      return contest;
+    } else {
+      log('Failed to load contest: ${response.body}');
+      throw Exception('Failed to load contest data');
+    }
+  }
+
+  static Future<CodeforcesContest> getContestLatest(
+      String platform, List<String> usernames) async {
+    String url = '$baseURL/contest/$platform/latest';
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'usernames': usernames,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      CodeforcesContest contest = CodeforcesContest.fromJson(data);
+      return contest;
+    } else {
+      log('Failed to load contest latest: ${response.body}');
+      throw Exception('Failed to load contest data');
+    }
+  }
+
+  static Future<CodeforcesContest> getContestCurrent(
+      String platform, List<String> usernames) async {
+    String url = '$baseURL/contest/$platform/current';
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'usernames': usernames,
+      }),
+    );
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      CodeforcesContest contest = CodeforcesContest.fromJson(data);
+
+      return contest;
+    } else {
+      log('Failed to load contest upcoming: ${response.body}');
+      throw Exception('Failed to load contest data');
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> getUpcomingContests(String platform) async {
+    String url = '$baseURL/contest/$platform/upcoming';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      List<Map<String, dynamic>> contests = data.map((contest) {
+        return {
+          'contestId': contest['contestId'],
+          'contestName': contest['contestName'],
+          'startTime': contest['startTime'],
+        };
+      }).toList();
+      return contests;
+    } else {
+      log('Failed to load upcoming contests: ${response.body}');
+      throw Exception('Failed to load contest data');
     }
   }
 }
