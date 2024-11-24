@@ -1,14 +1,14 @@
 import 'package:cp_api/screens/user_profile/user_profile_screen.dart';
 import 'package:flutter/material.dart';
 
-class UsernamePage extends StatefulWidget {
-  const UsernamePage({super.key});
+class UsernameInputScreen extends StatefulWidget {
+  const UsernameInputScreen({super.key});
 
   @override
-  UsernamePageState createState() => UsernamePageState();
+  UsernameInputScreenState createState() => UsernameInputScreenState();
 }
 
-class UsernamePageState extends State<UsernamePage> {
+class UsernameInputScreenState extends State<UsernameInputScreen> {
   bool useCommonUsername = true;
   final TextEditingController commonUsernameController =
       TextEditingController();

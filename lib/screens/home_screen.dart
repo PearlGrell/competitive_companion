@@ -1,7 +1,7 @@
-import 'dart:developer';
 
 import 'package:cp_api/screens/contests/usernames_input.dart';
 import 'package:cp_api/screens/contests/upcoming_contest_screen.dart';
+import 'package:cp_api/screens/settings/settings_screen.dart';
 import 'package:cp_api/screens/user_profile/username_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Welcome to Competitive Companion'),
+        title: const Text('Competitive Companion'),
         centerTitle: true,
       ),
       body: Padding(
@@ -36,12 +36,12 @@ class HomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   CupertinoPageRoute(
-                    builder: (context) => const UsernamePage(),
+                    builder: (context) => const UsernameInputScreen(),
                   ),
                 );
               },
             ),
-            SizedBox(height: screenHeight * 0.012),
+            SizedBox(height: screenHeight * 0.006),
             OptionCard(
               icon: Icons.code,
               title: "Check Contest Standings by Code",
@@ -59,7 +59,7 @@ class HomeScreen extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(height: screenHeight * 0.012),
+            SizedBox(height: screenHeight * 0.006),
             OptionCard(
               icon: Icons.new_releases,
               title: "View Latest Contest",
@@ -77,7 +77,7 @@ class HomeScreen extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(height: screenHeight * 0.012),
+            SizedBox(height: screenHeight * 0.006),
             OptionCard(
               icon: Icons.hourglass_bottom,
               title: "View Ongoing Contest",
@@ -95,7 +95,7 @@ class HomeScreen extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(height: screenHeight * 0.012),
+            SizedBox(height: screenHeight * 0.006),
             OptionCard(
               icon: Icons.calendar_today,
               title: "Check Upcoming Contests",
@@ -111,9 +111,9 @@ class HomeScreen extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(height: screenHeight * 0.012),
+            SizedBox(height: screenHeight * 0.006),
             const Divider(),
-            SizedBox(height: screenHeight * 0.012),
+            SizedBox(height: screenHeight * 0.006),
             OptionCard(
               icon: Icons.settings,
               title: "Settings",
@@ -121,7 +121,14 @@ class HomeScreen extends StatelessWidget {
               screenHeight: screenHeight,
               screenWidth: screenWidth,
               onTap: () {
-                log("Settings tapped");
+                Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                    builder: (context) {
+                      return const SettingsScreen();
+                    },
+                  ),
+                );
               },
             ),
           ],
@@ -155,7 +162,7 @@ class OptionCard extends StatelessWidget {
       onTap: onTap,
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        elevation: 4,
+        elevation: 2,
         child: Padding(
           padding: EdgeInsets.all(screenWidth * 0.04),
           child: Row(
