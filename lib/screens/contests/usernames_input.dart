@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:cp_api/screens/contest_screen.dart';
+import 'package:cp_api/screens/contests/contest_screen.dart';
 import 'package:cp_api/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 

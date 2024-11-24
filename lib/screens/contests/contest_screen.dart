@@ -1,7 +1,7 @@
 import 'package:cp_api/models/codeforces_model.dart';
 import 'package:cp_api/screens/home_screen.dart';
 import 'package:flutter/material.dart';
-import '../../provider/api.dart';
+import '../../../provider/api.dart';
 
 class ContestScreen extends StatefulWidget {
   final String? selectedPlatform;
@@ -113,7 +113,7 @@ class _ContestScreenState extends State<ContestScreen> {
         children: [
           Text(
             '${codeforcesContest.contestName}',
-            style:const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
@@ -126,40 +126,80 @@ class _ContestScreenState extends State<ContestScreen> {
             style: const TextStyle(fontSize: 16),
           ),
           const SizedBox(height: 24),
-          const Text(
-            'Standings:',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          if (codeforcesContest.standings != null)
-            ...codeforcesContest.standings!.map(
-              (standings) => Card(
-                margin: const EdgeInsets.symmetric(vertical: 5),
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Rank: ${standings.rank}'),
-                      Text('Handle: ${standings.handle}'),
-                      Text('Points: ${standings.points}'),
-                      if (standings.successfulHackCount != null &&
-                          standings.successfulHackCount != 0)
-                        Text(
-                            'Successful Hack Count: ${standings.successfulHackCount}'),
-                      if (standings.unsuccessfulHackCount != null &&
-                          standings.unsuccessfulHackCount != 0)
-                        Text(
-                            'Unsuccessful Hack Count: ${standings.unsuccessfulHackCount}'),
-                      if (standings.problemResults != null)
-                        Text(
-                            'Problems Attempted: ${standings.problemResults!.length}'),
-                    ],
-                  ),
-                ),
+          if (codeforcesContest.standings!.isEmpty)
+            const Center(
+              child: Text(
+                'The entered usernames did not participate in this contest.',
+                style: TextStyle(fontSize: 16),
               ),
             ),
+          const SizedBox(height: 10),
+          (codeforcesContest.standings!.isNotEmpty)?
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Standings:',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                _buildStandingsTable(),
+              ],
+            ): const SizedBox(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildStandingsTable() {
+    return Table(
+      border: TableBorder.all(
+          color: Colors.grey.shade400,
+          width: 1,
+          borderRadius: BorderRadius.circular(12)),
+      columnWidths: const {
+        0: FlexColumnWidth(0.2),
+        1: FlexColumnWidth(0.4),
+        2: FlexColumnWidth(0.2),
+        3: FlexColumnWidth(0.2),
+      },
+      children: [
+        TableRow(
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+          ),
+          children: [
+            _buildTableCell('Rank', isHeader: true),
+            _buildTableCell('Handle', isHeader: true),
+            _buildTableCell('Points', isHeader: true),
+            _buildTableCell('Penalty', isHeader: true),
+          ],
+        ),
+        for (var standings in codeforcesContest.standings!)
+          TableRow(
+            children: [
+              _buildTableCell(standings.rank.toString()),
+              _buildTableCell(standings.handle.toString()),
+              _buildTableCell(standings.points.toString()),
+              _buildTableCell(
+                standings.penalty.toString(),
+              ),
+            ],
+          ),
+      ],
+    );
+  }
+
+  Widget _buildTableCell(String text, {bool isHeader = false}) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
+          fontSize: 16,
+        ),
+        textAlign: TextAlign.center,
       ),
     );
   }
