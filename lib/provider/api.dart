@@ -43,8 +43,39 @@ class API {
     }
   }
 
-  static Future<CodeforcesContest> getContest(
-      String platform, List<String> usernames, String contestId) async {
+  static Future<Map<String,dynamic>> getUserInfoByPlatform(String cf, String cc, String gfg, String lc){
+    String ccUrl = '$baseURL/fetch/codechef/$cc';
+    String cfUrl = '$baseURL/fetch/codeforces/$cf';
+    String gfgUrl = '$baseURL/fetch/geeksforgeeks/$gfg';
+    String lcUrl = '$baseURL/fetch/leetcode/$lc';
+
+    return Future.wait([http.get(Uri.parse(ccUrl)), http.get(Uri.parse(cfUrl)), http.get(Uri.parse(gfgUrl)), http.get(Uri.parse(lcUrl)),]).then((List<http.Response> responses) {
+      Map<String, dynamic> platformModels = {};
+      if (responses[0].statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(responses[0].body);
+        CodeChefModel model = CodeChefModel.fromJson(data);
+        platformModels['codechef'] = model;
+      }
+      if (responses[1].statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(responses[1].body);
+        CodeforcesModel model = CodeforcesModel.fromJson(data);
+        platformModels['codeforces'] = model;
+      }
+      if (responses[2].statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(responses[2].body);
+        GeeksForGeeksModel model = GeeksForGeeksModel.fromJson(data);
+        platformModels['geeksforgeeks'] = model;
+      }
+      if (responses[3].statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(responses[3].body);
+        LeetCodeModel model = LeetCodeModel.fromJson(data);
+        platformModels['leetcode'] = model;
+      }
+      return platformModels;
+    });
+  }
+
+  static Future<CodeforcesContest> getContest(String platform, String usernames, String contestId) async {
     String url = '$baseURL/contest/$platform';
 
     final response = await http.post(
@@ -59,6 +90,7 @@ class API {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       CodeforcesContest contest = CodeforcesContest.fromJson(data);
+      log('Contest: $data');
       return contest;
     } else {
       log('Failed to load contest: ${response.body}');
@@ -66,8 +98,7 @@ class API {
     }
   }
 
-  static Future<CodeforcesContest> getContestLatest(
-      String platform, List<String> usernames) async {
+  static Future<CodeforcesContest> getContestLatest(String platform, String usernames) async {
     String url = '$baseURL/contest/$platform/latest';
 
     final response = await http.post(
@@ -88,8 +119,7 @@ class API {
     }
   }
 
-  static Future<CodeforcesContest> getContestCurrent(
-      String platform, List<String> usernames) async {
+  static Future<CodeforcesContest> getContestCurrent(String platform, String usernames) async {
     String url = '$baseURL/contest/$platform/current';
 
     final response = await http.post(
@@ -102,7 +132,7 @@ class API {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       CodeforcesContest contest = CodeforcesContest.fromJson(data);
-
+      log('Contest: $data');
       return contest;
     } else {
       log('Failed to load contest upcoming: ${response.body}');
@@ -130,4 +160,5 @@ class API {
       throw Exception('Failed to load contest data');
     }
   }
+
 }
